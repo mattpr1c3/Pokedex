@@ -13,15 +13,38 @@ function App() {
   const [searchType, setSearchType] = useState("");
   const [searchWeakness, setSearchWeakness] = useState("");
   const [limit, setLimit] = useState(5);
+  const [filterSearches,setFilterSearches]=useState({'name':'','type':'','weak':""})
 
-  const handleChange = (e) => {
-    const newValue = e.target.value;
-    setPokemonList(
-      allPokemon.filter((pokemon) => {
-        return pokemon.name.toLowerCase().includes(newValue.toLowerCase());
-      })
-    );
+  const handleChange = (e,filterType) => {
+    if(filterType=='name'){
+      setFilterSearches({...filterSearches,'name':e.target.value})
+    }
+    if(filterType=='type'){
+      setFilterSearches({...filterSearches,'type':e.target.value})
+    }
+    if(filterType=='weak'){
+      setFilterSearches({...filterSearches,'weak':e.target.value})
+    }
+    // const newValue = e.target.value;
   };
+
+  const getFilterPokemon=()=>{
+    let res=allPokemon.filter((pokemon) => {
+      return pokemon.name.toLowerCase().includes(filterSearches.name.toLowerCase());
+    })
+    .filter((pokemon) => {
+      let type = pokemon.type.join()
+      return type.toLowerCase().includes(filterSearches.type.toLowerCase());
+    })
+    .filter((pokemon) => {
+      let weak = pokemon.weaknesses.join()
+      return weak.toLowerCase().includes(filterSearches.weak.toLowerCase());
+    })
+    console.log('poke',res)
+
+    return res
+
+  }
 
   useEffect(() => {
     const apiCall = () => {
@@ -51,7 +74,7 @@ function App() {
       {/* add to search bar? or new search? */}
       {/* handlechange could be replaced by setsearchname */}
       <SearchBar onChange={handleChange} />
-      <AllPokemon pokemon={pokemonList} />
+      <AllPokemon pokemon={getFilterPokemon()} />
     </div>
   );
 }
